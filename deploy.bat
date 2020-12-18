@@ -9,4 +9,4 @@ RD /S /Q "%CURDRIVE%work\%COURSE%\public\"
 
 git add *
 git commit -m %1
-git push origin master
+git push origin main
