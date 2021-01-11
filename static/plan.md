@@ -1,7 +1,9 @@
 1. Коллекции
-  1. listFuns
-  2. List – Collection – Iterable
-  3. setAndMap
+2. Сериализация
+3. Кmongo
+4. Поиск в kmongo и регулярные выражение
+5. Парсинг xml json
+6. Парсинг 
 
     
 
