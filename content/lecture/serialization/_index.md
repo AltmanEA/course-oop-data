@@ -6,4 +6,4 @@ title: "2. Сериализация"
 
 - [Понятия сериализации и библиотека jackson](jackson)
 - [Библиотека kotlinx.serialization](kotlinxserial)
-- [Библиотека kotlinx.serialization, продолжение ](kotlinxserialcont)
+- [Библиотека kotlinx.serialization, часть 2](kotlinxserialcont)
