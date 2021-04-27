@@ -19,5 +19,6 @@ weight: 20
 - [Коллекции](collection)
 - [Сериализация](serialization)
 - [Основы MongoDb](mongo)
+- [Анализ данных](parse)
 
 
