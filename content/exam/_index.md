@@ -22,6 +22,17 @@ weight: 40
 17. Коллекция LinkedList
 18. Реализация изменяемых коллекций
 19. Коллекции типа очередь
+21. Функция mapIndexed
+22. Функция zip
+23. Функция joinToString
+24. Функция maxBy класса Iterable
+24. Функция count класса Iterable
+24. Функция mapTo класса Iterable
+25. Функция associate класса Iterable
+25. Функция associateWith класса Iterable
+26. Функция merge класса TreeMap
+27. Интерфейс Queue
+28. Интерфейс Deque
 20. Сериализация
 21. Форматы сериализации
 22. Библиотеки для сериализации для Kotlin

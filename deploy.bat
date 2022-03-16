@@ -1,11 +1,10 @@
 hugo
 
-SET COURSE=oop-data
 SET CURDRIVE=%CD:~0,3%
 
-ROBOCOPY "%CURDRIVE%work\edu\%COURSE%\public"   "%CURDRIVE%Work\AltmanEA.github.io\%COURSE%" /S
+ROBOCOPY ".\public"   "%CURDRIVE%Work\AltmanEA.github.io\1c" /S
 
-RD /S /Q "%CURDRIVE%work\edu\%COURSE%\public\"
+RD /S /Q ".\public\"
 
 git add *
 git commit -m %1
