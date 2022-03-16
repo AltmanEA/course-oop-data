@@ -2,7 +2,7 @@ hugo
 
 SET CURDRIVE=%CD:~0,3%
 
-ROBOCOPY ".\public"   "%CURDRIVE%Work\AltmanEA.github.io\1c" /S
+ROBOCOPY ".\public"   "%CURDRIVE%Work\AltmanEA.github.io\oop-data" /S
 
 RD /S /Q ".\public\"
 
