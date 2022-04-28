@@ -1,0 +1,368 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Регулярные выражения</title>
+
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/beige.css" id="theme">
+		<link rel="stylesheet" href="plugin/highlight/github.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+                <section data-markdown data-separator="^\n---\n$" data-separator-vertical="^\n--\n$">
+                    <script type="text/template">
+### Функции с regexp
+
+```Kotlin
+val splitExample = 
+    "Пример первый. Разделяем на слова, учитываем знаки препинания."
+val regexp = Regex(" ")
+val match = regex.findAll(splitExample).toList()
+val result = splitExample.split(regex)
+result.zip(match).forEach {
+    print("${it.first}\n\t\t")
+    it.second.groups.forEach { matchGroup ->
+        print("range - ${matchGroup?.range}; ")
+        println("value - |${matchGroup?.value}|")
+    }
+}
+println(result.last())
+```
+
+[https://regex101.com/](https://regex101.com/)
+
+--
+
+### Простейший regexp
+
+```Kotlin
+val splitExample = 
+    "Пример первый. Разделяем на слова, учитываем знаки препинания."
+val regexp = Regex(" ")
+```
+```Kotlin
+Пример
+		range - 6..6; value - | |
+первый.
+		range - 14..14; value - | |
+Разделяем
+		range - 24..24; value - | |
+на
+		range - 27..27; value - | |
+слова,
+		range - 34..34; value - | |
+учитываем
+		range - 44..44; value - | |
+знаки
+		range - 50..50; value - | |
+препинания.
+```
+
+--
+
+### Наборы символов
+
+<pre style="font-size: 16px"><code>--- Pattern: [,. ] --- 
+Пример
+		range - 6..6; value - | |
+первый
+		range - 13..13; value - |.|
+
+		range - 14..14; value - | |
+Разделяем
+		range - 24..24; value - | |
+на
+		range - 27..27; value - | |
+слова
+		range - 33..33; value - |,|
+
+		range - 34..34; value - | |
+учитываем
+		range - 44..44; value - | |
+знаки
+		range - 50..50; value - | |
+препинания
+		range - 61..61; value - |.|</code></pre>
+
+--
+
+### Квантификатор ?
+
+<pre style="font-size: 16px"><code>--- Pattern: [,.]?  --- 
+Пример
+		range - 6..6; value - | |
+первый
+		range - 13..14; value - |. |
+Разделяем
+		range - 24..24; value - | |
+на
+		range - 27..27; value - | |
+слова
+		range - 33..34; value - |, |
+учитываем
+		range - 44..44; value - | |
+знаки
+		range - 50..50; value - | |
+препинания.</code></pre>
+
+--
+
+### Перечисление
+
+<pre style="font-size: 16px"><code>--- Pattern: [[,.]? |.] --- 
+Пример
+		range - 6..6; value - | |
+первый
+		range - 13..13; value - |.|
+
+		range - 14..14; value - | |
+Разделяем
+		range - 24..24; value - | |
+на
+		range - 27..27; value - | |
+слова
+		range - 33..33; value - |,|
+
+		range - 34..34; value - | |
+учитываем
+		range - 44..44; value - | |
+знаки
+		range - 50..50; value - | |
+препинания
+		range - 61..61; value - |.|</code></pre>
+
+
+--
+
+### Ревнивая квантификация
+
+<pre style="font-size: 16px"><code>--- Pattern: [[,|.]? |.]+ --- 
+Пример
+		range - 6..6; value - | |
+первый
+		range - 13..14; value - |. |
+Разделяем
+		range - 24..24; value - | |
+на
+		range - 27..27; value - | |
+слова
+		range - 33..34; value - |, |
+учитываем
+		range - 44..44; value - | |
+знаки
+		range - 50..50; value - | |
+препинания
+		range - 61..61; value - |.|</code></pre>
+
+---
+
+
+### Квантификторы
+
+<style type="text/css">
+    .tg  {border-collapse:collapse;border-spacing:0;}
+    .tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:18px;
+      overflow:hidden;padding:10px 5px;word-break:normal;}
+    .tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:18px;
+      font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+    .tg .tg-c3ow{border-color:inherit;text-align:center;vertical-align:top}
+    .tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
+</style>
+
+##### В общем виде
+
+<table class="tg">
+    <thead>
+      <tr>
+        <th class="tg-c3ow">Представление</th>
+        <th class="tg-c3ow">Число повторений</th>
+        <th class="tg-c3ow">Пример</th>
+        <th class="tg-c3ow">Соответствие</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="tg-0pky">{n}</td>
+        <td class="tg-0pky">Ровно n раз</td>
+        <td class="tg-0pky">colou{3}r</td>
+        <td class="tg-0pky">colouuur</td>
+      </tr>
+      <tr>
+        <td class="tg-0pky">{m,n}</td>
+        <td class="tg-0pky">От m до n включительно</td>
+        <td class="tg-0pky">colou{2,4}r</td>
+        <td class="tg-0pky">colouur, colouuur, colouuuur</td>
+      </tr>
+      <tr>
+        <td class="tg-0pky">{m,}</td>
+        <td class="tg-0pky">Не менее m</td>
+        <td class="tg-0pky">colou{2,}r</td>
+        <td class="tg-0pky">colouur, colouuur, colouuuur и т. д.</td>
+      </tr>
+      <tr>
+        <td class="tg-0pky">{,n}</td>
+        <td class="tg-0pky">Не более n</td>
+        <td class="tg-0pky">colou{,3}r</td>
+        <td class="tg-0pky">color, colour, colouur, colouuur</td>
+      </tr>
+    </tbody>
+</table>
+
+##### Сокращения
+
+
+<table class="tg">
+    <thead>
+      <tr>
+        <th class="tg-c3ow">Представление</th>
+        <th class="tg-c3ow">Число повторений</th>
+        <th class="tg-c3ow">Эквивалент</th>
+        <th class="tg-c3ow">Пример</th>
+        <th class="tg-c3ow">Соответствие</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="tg-0pky">?</td>
+        <td class="tg-0pky">Ноль или одно</td>
+        <td class="tg-0pky">{0,1}</td>
+        <td class="tg-0pky">colou?r</td>
+        <td class="tg-0pky">color, colour</td>
+      </tr>
+      <tr>
+        <td class="tg-0pky">*</td>
+        <td class="tg-0pky">Ноль или более</td>
+        <td class="tg-0pky">{0,}</td>
+        <td class="tg-0pky">colou*r</td>
+        <td class="tg-0pky">color, colour, colouur и т. д.</td>
+      </tr>
+      <tr>
+        <td class="tg-0pky">+</td>
+        <td class="tg-0pky">Одно или более</td>
+        <td class="tg-0pky">{1,}</td>
+        <td class="tg-0pky">colou+r</td>
+        <td class="tg-0pky">colour, colouur и т. д. (но не color)</td>
+      </tr>
+    </tbody>
+</table>
+
+--
+
+### Пример на замену
+
+```Kotlin
+val replaceExample = "Федор Михайлович Достоевский " +
+    "и Лев Николаевич Толстой. И Александр Сергеевич Пушкин, конечно."
+val replaceRegex = Regex("([А-Я][а-я]+ ){2}[А-Я][а-я]+") 
+println(replaceExample.replace(replaceRegex) {
+    val fio = it.value.split(" ")
+    "${fio[2]} ${fio[0][0]}. ${fio[1][0]}."
+})
+```
+
+--
+
+### Пример на поиск
+
+```Kotlin
+val findExample = "<div class='x'> text <b> bold </b> text </div>"
+val regex = Regex("")
+regex.findAll(findExample).forEach {
+    print("---")
+    it.groups.forEach { matchGroup ->
+        print("\t range - ${matchGroup?.range}; ")
+        println("value - |${matchGroup?.value}|")
+    }
+}
+```
+
+--
+
+### Метасимвол «.»
+
+<pre style="font-size: 16px"><code>
+<div class='x'> text <b> bold </b> text </div>
+--- Pattern: <.*> --- 
+---	 range - 0..45; value - |<div class='x'> text <b> bold </b> text </div>|</code></pre>
+
+--
+
+### Отрицание
+
+<pre style="font-size: 16px"><code>
+<div class='x'> text <b> bold </b> text </div>
+--- Pattern: <[^>]*> --- 
+---	 range - 0..14; value - |<div class='x'>|
+---	 range - 21..23; value - |<b>|
+---	 range - 30..33; value - |</b>|
+---	 range - 40..45; value - |</div>|</code></pre>
+
+--
+
+### Ленивая квантификация
+
+<pre style="font-size: 16px"><code>
+<div class='x'> text <b> bold </b> text </div>
+--- Pattern: <.*?> --- 
+---	 range - 0..14; value - |<div class='x'>|
+---	 range - 21..23; value - |<b>|
+---	 range - 30..33; value - |</b>|
+---	 range - 40..45; value - |</div>|</code></pre>
+
+--
+
+### Группы
+
+<pre style="font-size: 16px"><code>
+<div class='x'> text <b> bold </b> text </div>
+--- Pattern: <(.*?)>.*</\1> --- 
+---	 range - 21..33; value - |<b> bold </b>|
+	 range - 22..22; value - |b|</code></pre>
+
+--
+
+### Классы символов
+
+<pre style="font-size: 16px"><code>
+<div class='x'> text <b> bold </b> text </div>
+--- Pattern: <(\w*?)(.*?)>(.*)</\1> --- 
+---	 range - 0..45; value - |<div class='x'> text <b> bold </b> text </div>|
+	 range - 1..3; value - |div|
+	 range - 4..13; value - | class='x'|
+	 range - 15..39; value - | text <b> bold </b> text |</code></pre>
+
+</script>
+                </section>
+            </div>
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+
+		<script src="plugin/menu/menu.js"></script>
+		<script src="plugin/audio-slideshow/plugin.js"></script>
+		<script src="plugin/audio-slideshow/recorder.js"></script>
+		<script src="plugin/audio-slideshow/RecordRTC.js"></script>
+		<script>
+			Reveal.initialize({
+				hash: true,
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes, RevealMenu, RevealAudioSlideshow, RevealAudioRecorder ],
+				menu: {
+		        	themes: true,
+        			themesPath: 'dist/theme/',
+		        },
+				audio: {
+					prefix: 'audio/regexp/',
+					suffix: '.webm;codecs=opus'
+				}
+			});
+		</script>
+	</body>
+</html>
