@@ -1,0 +1,251 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Технология XPath</title>
+
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/beige.css" id="theme">
+		<link rel="stylesheet" href="plugin/highlight/github.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+                <section data-markdown data-separator="^\n---\n$" data-separator-vertical="^\n--\n$">
+                    <script type="text/template">
+### XPath
+
+XPath (XML Path Language) — язык запросов к элементам XML-документа.
+
+XQuery – расширение XPath (итерация, и др.)
+
+[https://www.freeformatter.com/xpath-tester.html](https://www.freeformatter.com/xpath-tester.html) - для тестирования xpath запросов
+
+[https://fedstat.ru/](https://fedstat.ru/)
+
+--
+
+### Обрабатываемые данные
+
+![](images/xpath/okved2.jpg)
+
+--
+
+### Обрабатываемые данные
+
+![](images/xpath/okato.jpg)
+
+--
+
+### Обрабатываемые данные
+
+![](images/xpath/dataset.jpg)
+
+--
+
+### Инструменты
+
+```Kotlin
+private val parser =
+    XPathFactory
+        .newInstance()
+        .newXPath()
+
+private val doc =
+  DocumentBuilderFactory
+    .newInstance()
+    .newDocumentBuilder()
+    .parse(Reader::class.java
+      .getResourceAsStream("data_part.xml"))
+```
+
+--
+
+### Обработка
+
+```Kotlin
+val result = parser
+  .compile(query)
+  .evaluate(doc, XPathConstants.NODESET) as NodeList
+result.map(cursorQuery).also {
+  print(it)
+}
+println()
+
+fun <R> NodeList.map(transform: (Node) -> R): List<R> =
+```
+
+--
+
+### Выбор узлов по имени
+
+```Kotlin
+val query = "//CodeList/Name"
+val cursorQuery = { node: Node ->
+  node.firstChild.nodeValue
+}
+```
+```
+[Классификатор видов экономической деятельности (ОКВЭД2), 
+Классификатор объектов административно-территориального 
+  деления (ОКАТО)]
+```
+
+--
+
+### Оси
+
+- child:: 
+- descendant:: (```/descendant::node()/``` = ```//```)
+- parent:: (```...```)
+- ancestor:: 
+- self:: (```.```)
+- attribute:: (```@```)
+- и др.
+
+--
+
+### Функции над узлами
+
+- ```node()``` (```*```)
+- ```text()```
+- ```count(node-set)```
+- строковые
+- логические
+
+--
+
+### Дополнительные условия выбора
+
+```Kotlin
+query = 
+"//CodeList[@id='s_OKATO']/Code/Description[contains(.,'мск')]"
+cursorQuery = 
+node.firstChild.nodeValue + " - " +
+  node.parentNode.attributes.getNamedItem("value").nodeValue
+```
+```
+[Костромская область - 34000000000, Омская область - 52000000000, 
+  Томская область - 69000000000, Пермский край - 57000000000]
+```
+
+--
+
+### Анализ узлов с помощью XPath
+
+```Kotlin
+fun Node.getText(query: String) =
+    parser
+        .compile(query)
+        .evaluate(this)
+        .toString()
+```
+```Kotlin
+query = 
+"//CodeList[@id='s_OKATO']/Code/Description[contains(.,'мск')]"
+cursorQuery = 
+node.getText("../@value") + ": " + node.getText(".")
+```
+```
+[34000000000: Костромская область, 52000000000: Омская область, 
+  69000000000: Томская область, 57000000000: Пермский край]
+```
+
+--
+
+### Пример анализа данных
+
+```Kotlin
+val cursorQuery = { node: Node ->
+  val year = node.getText("../..//Time")
+  val month = node.getText("../..//Value[@concept='PERIOD']/@value")
+  val value = node.getText("../..//ObsValue/@value")
+  "$month $year: $value\n"
+}
+val query = "//SeriesKey/Value[@value='643']"
+```
+```
+[январь 2018: 80078,3
+, февраль 2018: 79768,34
+, январь-февраль 2018: 79880,03
+, март 2018: 86360,83
+, январь-март 2018: 82056,33
+...
+```
+
+--
+
+### Пример анализа данных
+
+```Kotlin
+val query = "//SeriesKey/Value[@value='643'][../../Attributes/Value
+  [@concept='PERIOD' and not(contains(@value, '-'))]]"
+```
+```
+[январь 2018: 80078,3
+, февраль 2018: 79768,34
+, март 2018: 86360,83
+, апрель 2018: 81437,37
+, май 2018: 78942,09
+...
+, январь 2018: 80078,3
+, февраль 2018: 79768,34
+, март 2018: 86360,83
+...
+```
+
+--
+
+### Пример анализа данных
+
+```Kotlin
+val query = "//SeriesKey/Value[@concept='s_OKATO' and @value='643']
+  [../Value[@concept='s_OKVED2' and @value='62']]
+  [../../Attributes/Value
+    [@concept='PERIOD' and not(contains(@value, '-'))]]"
+```
+```
+[январь 2018: 80078,3
+, февраль 2018: 79768,34
+, март 2018: 86360,83
+, апрель 2018: 81437,37
+, май 2018: 78942,09
+, июнь 2018: 184905,6
+, июль 2018: 78829,66
+...
+```
+
+
+</script>
+                </section>
+            </div>
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+
+		<script src="plugin/menu/menu.js"></script>
+		<script src="plugin/audio-slideshow/plugin.js"></script>
+		<script src="plugin/audio-slideshow/recorder.js"></script>
+		<script src="plugin/audio-slideshow/RecordRTC.js"></script>
+		<script>
+			Reveal.initialize({
+				hash: true,
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes, RevealMenu, RevealAudioSlideshow, RevealAudioRecorder ],
+				menu: {
+		        	themes: true,
+        			themesPath: 'dist/theme/',
+		        },
+				audio: {
+					prefix: 'audio/regexp/',
+					suffix: '.webm;codecs=opus'
+				}
+			});
+		</script>
+	</body>
+</html>
