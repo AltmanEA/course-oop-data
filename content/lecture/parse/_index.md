@@ -6,3 +6,4 @@ title: "4. Поиск в данных"
 
 - <a target="_blank" rel="noopener noreferrer" href="../../slides/regexp.html">Регулярные выражения</a>
 - <a target="_blank" rel="noopener noreferrer" href="../../slides/xpath.html">Технология XPath</a>
+- <a target="_blank" rel="noopener noreferrer" href="../../slides/stax.html">Технология StAX</a>
